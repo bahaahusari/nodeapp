@@ -1,19 +1,15 @@
-FROM node:lts-jessie
-
-# Set the work directory
-RUN mkdir -p /var/www/nodeapp
-WORKDIR /var/www/nodeapp
-
-# Add our nodeapp.js and install *before* adding our application files
-ADD nodeapp.js ./
-RUN npm i --production
-
-# Install pm2 *globally* so we can run our application
-RUN npm i -g pm2
-
-# Add application files
-ADD nodeapp /var/www/nodeapp
-
-EXPOSE 4000
-
-CMD ["pm2", "start", "process.json", "--no-daemon"]
+# Use the official lightweight Node.js 16 image.
+# https://hub.docker.com/_/node
+FROM node:16-slim
+# Create and change to the app directory.
+WORKDIR /usr/src/nodeapp
+# Copy application dependency manifests to the container image.
+# A wildcard is used to ensure both package.json AND package-lock.json are copied.
+# Copying this separately prevents re-running npm install on every code change.
+COPY package*.json ./
+# Install production dependencies.
+RUN npm install --only=production
+# Copy local code to the container image.
+COPY . ./
+# Run the web service on container startup.
+CMD [ "npm", "start" ]
