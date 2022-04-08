@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: nodeapp
-  replicas: 1
+  replicas: 3
   template:
     metadata:
       labels:
@@ -29,7 +29,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: candidate-6-service
+  name: nodeapp-service
 spec:
   type: LoadBalancer
   ports:
@@ -37,9 +37,4 @@ spec:
     targetPort: 3000
     protocol: TCP
   selector:
-<<<<<<< HEAD
     app: nodeapp
-    
-=======
-    app: candidate-6
->>>>>>> 74378935973a276153ff22f0fab7b17806114d6d
