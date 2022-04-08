@@ -16,13 +16,11 @@ fi
 
 # Setting up the MongoDB repository and installing the MongoDB package
 
-if ! apt-key list | grep -q 'MongoDB 5.0 Release Signing Key'; then
-	wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | sudo apt-key add -
-	sudo apt-get install gnupg
-	wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | sudo apt-key add -
+if ! apt-key list | grep -q 'MongoDB 4.0 Release Signing Key'; then
+	sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 68818C72E52529D4
 	#apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4fi
-if ! test -f /etc/apt/sources.list.d/mongodb-org-5.0.list; then
-echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/5.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-5.0.list
+if ! test -f /etc/apt/sources.list.d/mongodb-org-4.0.list; then
+sudo echo "deb http://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
   apt-get update
 fi
 if ! dpkg -l mongodb-org | grep -q '^ii '; then
