@@ -29,7 +29,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nodeapp-service
+  name: candidate-6-service
 spec:
   type: LoadBalancer
   ports:
@@ -37,5 +37,9 @@ spec:
     targetPort: 3000
     protocol: TCP
   selector:
+<<<<<<< HEAD
     app: nodeapp
     
+=======
+    app: candidate-6
+>>>>>>> 74378935973a276153ff22f0fab7b17806114d6d
