@@ -1,0 +1,15 @@
+
+
+mongo -u admin -p admin --authenticationDatabase mongodb
+
+mongo -u admin --authenticationDatabase mogodb
+
+mongodb://mongodb-rs-ssnb:27017,mongodb-rs-qmqm:27017,mongodb-rs-x45k:27017/?replicaSet=demo_rs
+
+
+
+
+
+curl -s -O https://deb.nodesource.com/node_4.x/pool/main/n/nodejs/nodejs_4.2.3-1nodesource1~trusty1_amd64.deb
+sudo apt-get install rlwrap
+sudo dpkg -i nodejs_4.2.3-1nodesource1~trusty1_amd64.deb

@@ -17,10 +17,10 @@ spec:
       - name: nodeapp
         image: gcr.io/candidate-6/nodeapp:v1
         ports:
-        - containerPort: 4000
+        - containerPort: 3000
         env:
         - name: PORT
-          value: "4000"
+          value: "3000"
         - name: LOG_LEVEL
           value: "info"
         - name: NODE_ENV
@@ -34,7 +34,8 @@ spec:
   type: LoadBalancer
   ports:
   - port: 80
-    targetPort: 4000
+    targetPort: 3000
     protocol: TCP
   selector:
     app: nodeapp
+    
