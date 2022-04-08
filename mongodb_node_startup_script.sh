@@ -3,21 +3,22 @@
 set -euf -o pipefail
 
 # Setting up an SSH key for the VMs to be able to SSH to each other
-if ! grep -q 'ubuntu@mongodb-rs$' /home/ubuntu/.ssh/authorized_keys; then
-  curl http://metadata.google.internal/computeMetadata/v1/instance/attributes/mongodb_ssh_pub_key -H "Metadata-Flavor: Google" >> /home/ubuntu/.ssh/authorized_keys
-  echo '' >> /home/ubuntu/.ssh/authorized_keys
-fi
-if ! test -f /home/ubuntu/.ssh/id_rsa; then
-  curl http://metadata.google.internal/computeMetadata/v1/instance/attributes/mongodb_ssh_priv_key -H "Metadata-Flavor: Google" > /home/ubuntu/.ssh/id_rsa
-  echo '' >> /home/ubuntu/.ssh/id_rsa
-  chown ubuntu:ubuntu /home/ubuntu/.ssh/id_rsa
-  chmod 600 /home/ubuntu/.ssh/id_rsa
-fi
+#if ! grep -q 'ubuntu@mongodb-rs$' /home/ubuntu/.ssh/authorized_keys; then
+#  curl http://metadata.google.internal/computeMetadata/v1/instance/attributes/mongodb_ssh_pub_key -H "Metadata-Flavor: Google" >> /home/ubuntu/.ssh/authorized_keys
+#  echo '' >> /home/ubuntu/.ssh/authorized_keys
+#fi
+#if ! test -f /home/ubuntu/.ssh/id_rsa; then
+#  curl http://metadata.google.internal/computeMetadata/v1/instance/attributes/mongodb_ssh_priv_key -H "Metadata-Flavor: Google" > /home/ubuntu/.ssh/id_rsa
+ # echo '' >> /home/ubuntu/.ssh/id_rsa
+ # chown ubuntu:ubuntu /home/ubuntu/.ssh/id_rsa
+ # chmod 600 /home/ubuntu/.ssh/id_rsa
+#fi
 
 # Setting up the MongoDB repository and installing the MongoDB package
 
-if ! apt-key list | grep -q 'MongoDB 4.0 Release Signing Key'; then
-	sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 68818C72E52529D4
+if ! apt-key list | grep -q 'MongoDB 5.0 Release Signing Key'; then
+	sudo apt-get install gnupg
+	sudo wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | sudo apt-key add -
 	#apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4fi
 if ! test -f /etc/apt/sources.list.d/mongodb-org-4.0.list; then
 sudo echo "deb http://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
