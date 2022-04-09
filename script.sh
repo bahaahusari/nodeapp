@@ -80,9 +80,15 @@ if test "$(mongo --norc --quiet --eval 'rs.status()["codeName"]')" = "NotYetInit
     ssh -o StrictHostKeyChecking=no -l ubuntu -i /home/ubuntu/.ssh/id_rsa $MASTER_HOST "/usr/bin/mongo --norc --quiet --eval 'rs.add(\"${OUR_HOSTNAME}:27017\")'"
   fi
 fi
+gcloud compute ssh $(gcloud compute instances list --filter='tags.items:mongodb-replicaset' | tail -n+2 | head -n 1 | awk '{print $1}') --zone $(gcloud compute instances list --filter='tags.items:mongodb-replicaset' | tail -n+2 | head -n 1 | awk '{print $2}')
+mongo --norc --quiet --eval 'rs.status().members.forEach(function(member) {print(member["name"] + "\t" + member["stateStr"] + "  \tuptime: " + member["uptime"] + "s")})'
+
 
 # Setup of the node is done
 ##install Node.js
 sudo apt install -y curl
 sudo curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 sudo apt install -y nodejs
+git clone https://github.com/bahaahusari/nodeapp.git
+cd nodeapp 
+npm i
