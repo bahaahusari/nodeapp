@@ -10,7 +10,7 @@ spec:
   template:
     metadata:
       labels:
-        app: nodeapp
+        app: nodeapp-deployment
         env: development
     spec:
       containers:
@@ -33,8 +33,30 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 80
+  - port: 3000
     targetPort: 3000
     protocol: TCP
   selector:
-    app: nodeapp
+    app: nodeapp-service
+    
+
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: gke-tutorial-hpa
+  namespace: default
+  labels:
+    app: gke-tutorial-deployment
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    name: nodeapp-deployment
+    apiVersion: apps/v1beta1
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: 80
+        
