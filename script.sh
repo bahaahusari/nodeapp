@@ -26,10 +26,7 @@ echo "mongodb-enterprise-database hold" | sudo dpkg --set-selections
 echo "mongodb-enterprise-shell hold" | sudo dpkg --set-selections
 echo "mongodb-enterprise-mongos hold" | sudo dpkg --set-selections
 echo "mongodb-enterprise-tools hold" | sudo dpkg --set-selections
-sudo systemctl start mongod
-sudo systemctl daemon-reload
-sudo systemctl enable mongod
-sudo systemctl status mongod
+
 
 # Setting up the MongoDB server config file
 NEED_RESTART=false
@@ -40,7 +37,7 @@ fi
 if ! grep -Eq '\s*replSetName:\s*\w+' /etc/mongod.conf; then
 cat >> /etc/mongod.conf <<EOF
 replication:
-  replSetName: replicaset-mongo
+  replSetName: replicaset01
 EOF
   NEED_RESTART=true
 fi
@@ -67,7 +64,7 @@ if test "$(mongo --norc --quiet --eval 'rs.status()["codeName"]')" = "NotYetInit
   members_str=$(printf ",%s" "${node_arr[@]}")
   members_str=${members_str:1}
   # Doing the replicaset initialization
-  if mongo --norc --quiet --eval "rs.initiate( {_id : 'replicaset-mongo', \
+  if mongo --norc --quiet --eval "rs.initiate( {_id : 'replicaset01', \
       members: [ $members_str ] \
     })" | grep -q 'NewReplicaSetConfigurationIncompatible'; then
     # If the initialization failed because there are nodes in the replica set
@@ -80,9 +77,6 @@ if test "$(mongo --norc --quiet --eval 'rs.status()["codeName"]')" = "NotYetInit
     ssh -o StrictHostKeyChecking=no -l ubuntu -i /home/ubuntu/.ssh/id_rsa $MASTER_HOST "/usr/bin/mongo --norc --quiet --eval 'rs.add(\"${OUR_HOSTNAME}:27017\")'"
   fi
 fi
-gcloud compute ssh $(gcloud compute instances list --filter='tags.items:mongodb-replicaset' | tail -n+2 | head -n 1 | awk '{print $1}') --zone $(gcloud compute instances list --filter='tags.items:mongodb-replicaset' | tail -n+2 | head -n 1 | awk '{print $2}')
-mongo --norc --quiet --eval 'rs.status().members.forEach(function(member) {print(member["name"] + "\t" + member["stateStr"] + "  \tuptime: " + member["uptime"] + "s")})'
-
 
 # Setup of the node is done
 ##install Node.js
