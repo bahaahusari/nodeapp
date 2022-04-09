@@ -92,3 +92,4 @@ sudo apt install -y nodejs
 git clone https://github.com/bahaahusari/nodeapp.git
 cd nodeapp 
 npm i
+node nodeapp.js
