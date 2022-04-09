@@ -26,6 +26,7 @@ spec:
         - name: NODE_ENV
           value: "development"
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -39,24 +40,4 @@ spec:
   selector:
     app: nodeapp-service
     
-
-apiVersion: autoscaling/v2beta1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: gke-tutorial-hpa
-  namespace: default
-  labels:
-    app: gke-tutorial-deployment
-spec:
-  scaleTargetRef:
-    kind: Deployment
-    name: nodeapp-deployment
-    apiVersion: apps/v1beta1
-  minReplicas: 2
-  maxReplicas: 10
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        targetAverageUtilization: 80
         
