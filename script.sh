@@ -3,43 +3,47 @@
 set -euf -o pipefail
 
 # Setting up an SSH key for the VMs to be able to SSH to each other
-#if ! grep -q 'ubuntu@mongodb-rs$' /home/ubuntu/.ssh/authorized_keys; then
-#  curl http://metadata.google.internal/computeMetadata/v1/instance/attributes/mongodb_ssh_pub_key -H "Metadata-Flavor: Google" >> /home/ubuntu/.ssh/authorized_keys
-#  echo '' >> /home/ubuntu/.ssh/authorized_keys
-#fi
-#if ! test -f /home/ubuntu/.ssh/id_rsa; then
-#  curl http://metadata.google.internal/computeMetadata/v1/instance/attributes/mongodb_ssh_priv_key -H "Metadata-Flavor: Google" > /home/ubuntu/.ssh/id_rsa
- # echo '' >> /home/ubuntu/.ssh/id_rsa
- # chown ubuntu:ubuntu /home/ubuntu/.ssh/id_rsa
- # chmod 600 /home/ubuntu/.ssh/id_rsa
-#fi
+if ! grep -q 'ubuntu@mongodb-rs$' /home/ubuntu/.ssh/authorized_keys; then
+  curl http://metadata.google.internal/computeMetadata/v1/instance/attributes/mongodb_ssh_pub_key -H "Metadata-Flavor: Google" >> /home/ubuntu/.ssh/authorized_keys
+  echo '' >> /home/ubuntu/.ssh/authorized_keys
+fi
+if ! test -f /home/ubuntu/.ssh/id_rsa; then
+  curl http://metadata.google.internal/computeMetadata/v1/instance/attributes/mongodb_ssh_priv_key -H "Metadata-Flavor: Google" > /home/ubuntu/.ssh/id_rsa
+  echo '' >> /home/ubuntu/.ssh/id_rsa
+  chown ubuntu:ubuntu /home/ubuntu/.ssh/id_rsa
+  chmod 600 /home/ubuntu/.ssh/id_rsa
+fi
 
 # Setting up the MongoDB repository and installing the MongoDB package
-
-if ! apt-key list | grep -q 'MongoDB 5.0 Release Signing Key'; then
-	sudo apt-get install gnupg
-	sudo wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | sudo apt-key add -
-	#apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4fi
-if ! test -f /etc/apt/sources.list.d/mongodb-org-4.0.list; then
-sudo echo "deb http://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
-  apt-get update
-fi
-if ! dpkg -l mongodb-org | grep -q '^ii '; then
-  apt-get install -y mongodb-org
-fi
+sudo apt-get install gnupg
+sudo wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | sudo apt-key add -
+echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.com/apt/ubuntu bionic/mongodb-enterprise/5.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-enterprise.list
+sudo apt-get update
+sudo apt-get install -y mongodb-enterprise
+echo "mongodb-enterprise hold" | sudo dpkg --set-selections
+echo "mongodb-enterprise-server hold" | sudo dpkg --set-selections
+echo "mongodb-enterprise-database hold" | sudo dpkg --set-selections
+echo "mongodb-enterprise-shell hold" | sudo dpkg --set-selections
+echo "mongodb-enterprise-mongos hold" | sudo dpkg --set-selections
+echo "mongodb-enterprise-tools hold" | sudo dpkg --set-selections
+sudo systemctl start mongod
+sudo systemctl daemon-reload
+sudo systemctl enable mongod
+sudo systemctl status mongod
 
 # Setting up the MongoDB server config file
-NEED_RESTART=false0
+NEED_RESTART=false
 if ! grep -Eq '\s*bindIp: 0\.0\.0\.0' /etc/mongod.conf; then
   sed -i 's/bindIp: 127\.0\.0\.1/bindIp: 0.0.0.0/g' /etc/mongod.conf
   NEED_RESTART=true
 fi
-
 if ! grep -Eq '\s*replSetName:\s*\w+' /etc/mongod.conf; then
 cat >> /etc/mongod.conf <<EOF
 replication:
-  replSetName: mongo_rs
+  replSetName: replicaset-mongo
 EOF
+  NEED_RESTART=true
+fi
 
 # Starting/restarting the MongoDB service as needed to make sure it is running
 # and uses the right config
@@ -63,7 +67,7 @@ if test "$(mongo --norc --quiet --eval 'rs.status()["codeName"]')" = "NotYetInit
   members_str=$(printf ",%s" "${node_arr[@]}")
   members_str=${members_str:1}
   # Doing the replicaset initialization
-  if mongo --norc --quiet --eval "rs.initiate( {_id : 'mongo_rs', \
+  if mongo --norc --quiet --eval "rs.initiate( {_id : 'replicaset-mongo', \
       members: [ $members_str ] \
     })" | grep -q 'NewReplicaSetConfigurationIncompatible'; then
     # If the initialization failed because there are nodes in the replica set
@@ -78,3 +82,7 @@ if test "$(mongo --norc --quiet --eval 'rs.status()["codeName"]')" = "NotYetInit
 fi
 
 # Setup of the node is done
+##install Node.js
+sudo apt install -y curl
+sudo curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+sudo apt install -y nodejs
