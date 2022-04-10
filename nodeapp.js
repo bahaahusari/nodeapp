@@ -10,13 +10,13 @@ app.use(express.urlencoded({ extended: false }));
 // Connect to MongoDB
 mongoose
   .connect(
-	'mongodb://bahaa:123@mongodb-rs-41bg:27017/docker-node-mongo',
+    'mongodb://mongo:27017/docker-node-mongo',
     { useNewUrlParser: true }
   )
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.log(err));
 
-const Item = require('./models/item');
+const Item = require('./models/Item');
 
 app.get('/', (req, res) => {
   Item.find()
@@ -32,6 +32,6 @@ app.post('/item/add', (req, res) => {
   newItem.save().then(item => res.redirect('/'));
 });
 
-const port = 80;
+const port = 3000;
 
 app.listen(port, () => console.log('Server running...'));

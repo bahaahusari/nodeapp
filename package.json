@@ -5,21 +5,13 @@
   "scripts": {
     "start": "node nodeapp.js"
   },
-  "keywords": [
-    "kubernetes",
-    "k8s",
-    "mongo",
-    "mongodb",
-    "sidecar",
-    "docker",
-    "replica",
-    "replicaset"
-  ],
-  "author": "bahaa",
+  "keywords": [],
+  "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "latest",
-    "mongoose": "latest"
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "mongoose": "^5.2.7"
   },
   "devDependencies": {},
   "repository": {
