@@ -38,8 +38,10 @@ gcloud compute instance-groups managed create mongodb-replicaset \
     --size 3 \
     --region europe-west1 \
     --template mongodb-replicaset-template
+    
 •	Set permission Login to the first instance and check if MongoDB replicaset is running well
-- Initiate the Replica Set on this node to make this a Primary node:
+	- Initiate the Replica Set on this node to make this a Primary node:
+	
 rs.initiate()
 
 or
@@ -58,13 +60,16 @@ Check the replica status with :
 rs.status()
 
 mongodb-rs-qwt6:27017   SECONDARY       arbiter
+
 mongodb-rs-41bg:27017   PRIMARY         master
+
 mongodb-rs-7qpb:27017   SECONDARY  slave
 
 
 
 
 Convert Secondary to Arbiter Node : 
+
 rs.remove("mongodb-rs-qwt6:27017")
 
 rs.addArb("mongodb-rs-qwt6:27017")
@@ -72,7 +77,6 @@ rs.addArb("mongodb-rs-qwt6:27017")
 Connecting arbiter node : from secondary node, we will now add arbiter node
 
 rs.add( { host: "mongodb-rs-qwt6:27017", priority: 0, votes: 1, arbiterOnly: true, hidden: false } )
-
 
 
 Mongo 
@@ -109,11 +113,14 @@ connect to mongodb user :in mongodb
 
 mongo admin --username bahaa --password 123
 
-Replica Set Connections
+Replica Set Connections :
+
 mongoose.connect(
 'mongodb://bahaa:123@mongodb-rs-41bg:27017/docker-node-mongo',
 );
+
 Or 
+
 mongoose.connect(
  'mongodb://10.132.15.212:27017/docker-node-mongo',   
 );
@@ -143,6 +150,7 @@ ip : 104.199.110.161:80
 
 
 #  3. Nodeapp deployed on GKE :
+
 export PROJECT_ID="candidate-6"
 gcloud config set project $PROJECT_ID
 gcloud config set compute/zone europe-west1-b
@@ -156,6 +164,7 @@ gcloud container clusters create nodeapp-cluster \
 	--num-nodes 3 \
 
 Connect to the cluster :
+
 gcloud container clusters get-credentials nodeapp-cluster \
 --region europe-west1 \
 --project candidate-6
