@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: nodeapp
-        image: gcr.io/candidate-6/nodeapp:v1
+        image: nodeapp_app
         ports:
         - containerPort: 3000
         env:
@@ -26,7 +26,22 @@ spec:
         - name: NODE_ENV
           value: "development"
 ---
-
+version: '3'
+services:
+  app:
+    container_name: docker-node-mongo
+    restart: always
+    build: .
+    ports:
+      - '80:3000'
+    external_links:
+      - mongo
+  mongo:
+    container_name: mongo
+    image: mongo
+    ports:
+      - '27017:27017'
+      
 apiVersion: v1
 kind: Service
 metadata:
@@ -34,10 +49,9 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 3000
+  - port: 80
     targetPort: 3000
     protocol: TCP
   selector:
     app: nodeapp-service
-    
-        
+

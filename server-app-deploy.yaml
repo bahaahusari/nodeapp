@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodeapp-server-app-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nodeapp-server-app
+  template:
+    metadata:
+      labels:
+        app: nodeapp-server-app
+    spec:
+      containers:
+      - image: gcr.io/candidate-6/nodeapp:latest
+        name: container1
+        ports:
+        - containerPort: 5000
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - configMapRef:
+            name: server-side-configs
+        - secretRef:
+            name: server-side-secrets

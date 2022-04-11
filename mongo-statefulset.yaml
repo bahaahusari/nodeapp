@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mongodb
+  labels:
+    app: nodeapp-mongodb
+spec:
+  volumes:
+  - name: nodeapp-mongo-vol
+    persistentVolumeClaim:
+      claimName: nodeapp-pvc
+  containers:
+  - image: mongo
+    name: container1
+    command:
+    - mongod
+    - "--bind_ip"
+    - "0.0.0.0"
+    ports:
+    - containerPort: 27017
+    volumeMounts:
+    - name: nodeapp-mongo-vol
+      mountPath: /data/db
+      
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nodeapp-mongodb
+  name: nodeapp-mongo-service
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+  selector:
+    app: nodeapp-mongodb
