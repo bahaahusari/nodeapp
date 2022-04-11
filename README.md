@@ -11,12 +11,14 @@ Open shell :
 gcloud config set project candidate-6
 
 git clone https://github.com/bahaahusari/nodeapp.git
+
 cd nodeapp
 1.	Create an SSH keypair on your machine for the VMs to be able to SSH to each other:
 
 	ssh-keygen -f /tmp/temp_id_rsa -C ubuntu@mongodb-rs
 
 •	2. Create an instance template: with mongo dB installed :
+
 gcloud compute instance-templates create mongodb-replicaset-template \
     --machine-type e2-medium\
     --image-family ubuntu-1804-lts \
@@ -29,6 +31,8 @@ gcloud compute instance-templates create mongodb-replicaset-template \
     --metadata-from-file startup-script=script.sh,shutdown-script=down-script.sh
 
 * Create the instance group:
+
+
 gcloud compute instance-groups managed create mongodb-replicaset \
     --base-instance-name mongodb-rs\
     --size 3 \
