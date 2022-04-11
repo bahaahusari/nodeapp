@@ -1,4 +1,4 @@
-# nodeapp
+# nodeapp  - autoscaling solution on GKE for the node application  (mondodb , nodejs , k8s , GCP)
 
 1. Mongodb replicaset installed on 3 instances (not gke) - master,slave,arbiter
 2. Nodeapp code should be updated to use the replicaset instead of a single server
