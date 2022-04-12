@@ -185,7 +185,3 @@ kubectl expose deployment nodeappp --type=LoadBalancer --port 80 --target-port 3
 kubectl scale deployment nodeappp --replicas=3
 
 
-another command I do in GUI
-
-app work on :        http://wideops.info/
- 
