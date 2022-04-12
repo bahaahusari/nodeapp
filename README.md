@@ -26,7 +26,7 @@ gcloud compute instance-templates create mongodb-replicaset-template \
     --boot-disk-type pd-ssd \
     --boot-disk-size 25GB \
     --tags mongodb-replicaset \
-	   --scopes=https://www.googleapis.com/auth/cloud-platform \
+    --scopes=https://www.googleapis.com/auth/cloud-platform \
     --metadata mongodb_ssh_priv_key="$(cat /tmp/temp_id_rsa)",mongodb_ssh_pub_key="$(cat /tmp/temp_id_rsa.pub)" \
     --metadata-from-file startup-script=script.sh,shutdown-script=down-script.sh
 
