@@ -130,24 +130,23 @@ mongoose.connect(
 
 •	Push your Nodejs code to GitHub and clone it to your VM:
 git clone https://github.com/bahaahusari/nodeapp.git
+
 cd nodeapp
 
 •	Install Nodejs, npm, and run command npm install inside the app folder to install all the dependency associated with the project:
 
 sudo apt install -y curl
+
 sudo curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+
 sudo apt install -y nodejs
 
-replicaset instance install node app :D
+* replicaset instance install node app :D
 
 sudo npm i 
 sudo node nodeapp.js
 
 on port : 80
-
-host : mongodb-rs-41bg   (      test  )
-ip : 104.199.110.161:80  
-
 
 #  3. Nodeapp deployed on GKE :
 
@@ -176,6 +175,7 @@ docker build -t gcr.io/candidate-6/nodeapp:v2 .
 docker push gcr.io/candidate-6/nodeapp:v2
 
 Create Kubernetes Services :
+
 gcloud components install kubectl
 
 kubectl create deployment nodeappp --image=gcr.io/candidate-6/nodeapp:v2
